@@ -22,6 +22,7 @@ class App:
         self.time = StringVar(value=f'{self.seconds_remaining}')
         self.user_text = StringVar()
         self.text_canvas = None
+        self.user_entry = None
 
         with open('./words.txt') as words_file:
             self.test_words = words_file.read().split()
@@ -37,21 +38,26 @@ class App:
         if self.timer:
             self.window.after_cancel(self.timer)
 
+        # Clear the UI
         self.cpm.set('?')
         self.wpm.set('?')
         self.time.set(f'{self.seconds_remaining}')
         self.user_text.set('')
 
+        # Remove all tags and reset the current tag
         self.text_canvas.tag_remove('current', 0.0, END)
         self.text_canvas.tag_remove('correct', 0.0, END)
         self.text_canvas.tag_remove('incorrect', 0.0, END)
         self.text_canvas.tag_add('current', '0.0 wordstart', '0.0 wordend')
 
+        # Refocus on the user entry
+        self.user_entry.focus()
+
     def show_result(self):
         # Notify user of score
         showinfo(title='Your Results!', message=f'Here are your results:\n'
-                                                f'CPM={self.cpm.get()}\n'
-                                                f'WPM={self.wpm.get()}\n'
+                                                f'Your CPM is {self.cpm.get()}\n'
+                                                f'Your WPM is {self.wpm.get()}\n'
                                                 f'Good job!')
         # Reset the system
         self.reset()
@@ -134,7 +140,8 @@ class App:
         time_label = Label(text='Time Left:', font=FONT)
         time_entry = Entry(textvariable=self.time, justify='center', state='disabled')
         reset_button = Button(text='Reset', command=self.reset)
-        user_entry = Entry(justify='center', textvariable=self.user_text, font=BIG_FONT)
+        user_label = Label(text='Type the words in the entry below...', font=FONT)
+        self.user_entry = Entry(justify='center', textvariable=self.user_text, font=BIG_FONT)
 
         # Create the words canvas
         self.text_canvas = Text(width=60, height=20, bg='#191919',
@@ -160,7 +167,11 @@ class App:
         time_entry.grid(row=0, column=5, sticky='news', padx=3)
         reset_button.grid(row=0, column=6, sticky='news', padx=3)
         self.text_canvas.grid(row=1, column=0, columnspan=7, sticky='news')
-        user_entry.grid(row=2, column=0, columnspan=7, sticky='news')
+        user_label.grid(row=2, column=0, columnspan=7, sticky='news')
+        self.user_entry.grid(row=3, column=0, columnspan=7, sticky='news')
+
+        # Set the focus on the user entry
+        self.user_entry.focus()
 
         # Start the events loop
         self.window.mainloop()
