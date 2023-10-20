@@ -1,2 +1,2 @@
-# typing_speed_test
+# Typing Speed Test!
 A Tkinter based python program that tests your typing speed
